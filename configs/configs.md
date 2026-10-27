@@ -1,0 +1,1 @@
+# scripts de configuración de gem5
