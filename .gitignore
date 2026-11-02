@@ -42,5 +42,4 @@ __pycache__/
 
 # ===== Protección =====
 # Por si alguien clona gem5 dentro del repo por error (~1 GB + 10 GB compilado)
-gem5/m5out/
-src/hola
+gem5/
