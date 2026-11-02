@@ -83,7 +83,7 @@ Encabezados: `~/arqui/gem5/include/gem5/m5ops.h`.
 ```bash
 cd ~/arqui/proyecto-gem5
 mkdir -p bin
-aarch64-linux-gnu-gcc -O2 -static bin/hola.c -o bin/hola
+aarch64-linux-gnu-gcc -O2 -static src/hola.c -o bin/hola
 qemu-aarch64 ./bin/hola
 cd ~/arqui/gem5
 build/ARM_MESI/gem5.opt configs/deprecated/example/se.py -c ~/arqui/proyecto-gem5/bin/hola
@@ -93,7 +93,7 @@ El entorno está correcto si se cumple **todo** lo siguiente:
 
 | Comprobación | Resultado esperado |
 |---|---|
-| `qemu-aarch64 ./src/hola` | `Hola desde ARM en gem5` |
+| `qemu-aarch64 ./bin/hola` | `Hola desde ARM en gem5` |
 | Salida de gem5 | `gem5 version 26.0.0.0` |
 | Salida de gem5 | `Hola desde ARM en gem5` |
 | Última línea de gem5 | `Exiting @ tick 46502000 because exiting with last active thread context` |
