@@ -83,7 +83,7 @@ Encabezados: `~/arqui/gem5/include/gem5/m5ops.h`.
 ```bash
 cd ~/arqui/proyecto-gem5
 mkdir -p bin
-aarch64-linux-gnu-gcc -O2 -static src/hola.c -o bin/hola
+aarch64-linux-gnu-gcc -O2 -static bin/hola.c -o bin/hola
 qemu-aarch64 ./bin/hola
 cd ~/arqui/gem5
 build/ARM_MESI/gem5.opt configs/deprecated/example/se.py -c ~/arqui/proyecto-gem5/bin/hola
