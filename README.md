@@ -35,7 +35,8 @@ proyecto-gem5/
 ├─ results/          # Una carpeta por corrida (stats.txt, config.ini) + CSV por experimento
 ├─ report/           # Informe IEEE
 └─ docs/
-   └─ SETUP.md       # Guía de montaje del entorno
+   ├─ SETUP.md       # Guía de montaje del entorno
+   └─ gemm_scalar.md # Guía del benchmark escalar (contrato de datos, ROI, validación)
 ```
 
 ## Entorno
@@ -61,6 +62,19 @@ CPU usadas (`--list-cpu-types`): `ArmTimingSimpleCPU`, `ArmMinorCPU`, `ArmO3CPU`
 
 Tamaños de matriz: N = 64 y N = 128. Todas las métricas se toman solo de la región
 de interés, delimitada con `m5_reset_stats()` y `m5_dump_stats()`.
+
+**Lectura de `stats.txt`:** cada corrida tiene 2 bloques. El **primero** es la ROI
+(lo escribe `m5_dump_stats`). El segundo es acumulado desde el reset hasta el final
+del programa e incluye la validación. Usar siempre el primero.
+
+## Benchmarks
+
+| Programa | Uso | Validación | Guía |
+|---|---|---|---|
+| `src/gemm_scalar.c` | `gemm_scalar [N]` | `E1_VALIDATION: PASS` en nativo, QEMU y gem5 | [docs/gemm_scalar.md](docs/gemm_scalar.md) |
+
+Todos los benchmarks GEMM usan el mismo contrato de datos:
+`A[i][j] = (i + j) % 8`, `B[i][j] = (i * j) % 8`.
 
 ## Reproducir los experimentos
 
