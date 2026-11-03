@@ -1,0 +1,45 @@
+# ===== Salidas de gem5 =====
+# Carpeta por defecto cuando no se usa -d; los resultados oficiales van en results/
+m5out/
+# Trazas de --debug-flags: pueden pesar cientos de MB
+*.trace
+trace*.out
+
+# ===== Binarios compilados =====
+# Carpeta donde compilaremos los benchmarks
+bin/
+# Objetos y librerías intermedias de C
+*.o
+*.a
+# Binario de la prueba inicial
+src/hola
+
+# ===== Python (scripts de parseo y gráficos) =====
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+
+# ===== LaTeX (informe IEEE) =====
+# Archivos auxiliares que pdflatex/biber regeneran en cada compilación (por si acaso)
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# ===== Editores y sistema operativo =====
+.vscode/
+*.swp
+*~
+.DS_Store
+
+# ===== Protección =====
+# Por si alguien clona gem5 dentro del repo por error (~1 GB + 10 GB compilado)
+gem5/
