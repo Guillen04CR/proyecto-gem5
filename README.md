@@ -80,9 +80,15 @@ Todos los benchmarks GEMM usan el mismo contrato de datos:
 
 Cada experimento se regenera con un solo comando desde la raíz del repositorio:
 
+### E1
+
 ```bash
-./scripts/run_e1.sh    # (pendiente)
+./scripts/run_e1.sh /ruta/a/gem5/build/ARM/gem5.opt
 ```
+
+El script compila el benchmark AArch64 y ejecuta las seis configuraciones de
+E1. Ver [docs/run_e1.md](docs/run_e1.md) para los prerrequisitos, las carpetas
+de salida y el alcance del script.
 
 ## Convenciones de trabajo
 
