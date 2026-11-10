@@ -65,10 +65,16 @@ for cpu in "${CPUS[@]}"; do
         output="$OUTPUT_ROOT/${cpu}_N${size}"
 
         printf '%s\n' "Ejecutando CPU=$cpu, N=$size..."
-        "$GEM5_BIN" -d "$output" "$CONFIG" --cpu "$cpu" --size "$size"
+        # run.log guarda la salida de gem5 y del programa simulado
+        # Con pipefail, si gem5 falla el script se detiene igual que antes
+        mkdir -p "$output"
+        "$GEM5_BIN" -d "$output" "$CONFIG" --cpu "$cpu" --size "$size" 2>&1 \
+            | tee "$output/run.log"
 
         [[ -f "$output/stats.txt" ]] || fail "la corrida no produjo stats.txt: $output"
         [[ -f "$output/config.ini" ]] || fail "la corrida no produjo config.ini: $output"
+        grep -q 'E1_VALIDATION: PASS' "$output/run.log" \
+            || fail "la validación no dio PASS: $output/run.log"
     done
 done
 
