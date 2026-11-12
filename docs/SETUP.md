@@ -1,7 +1,14 @@
 # Montaje del entorno (reproducible)
 
 Guía para que cualquier integrante (o el profesor) monte desde cero el mismo
-entorno con el que se generaron los resultados. Tiempo total: ~2–3 h, la mayor
+entorno con el que se generaron los resultados.
+
+> **Forma recomendada: Docker.** Las corridas oficiales se hacen en el contenedor
+> del repositorio (ver [`docker/README.md`](../docker/README.md)): la imagen ya trae
+> todas las dependencias del paso 1, y los pasos 3 a 5 de esta guía se ejecutan
+> dentro del contenedor tal cual. Esta guía sirve también para un entorno nativo,
+> pero entonces el compilador y la libc pueden diferir y los números no coinciden
+> exactamente (ver `docs/E1.md`, sección Reproducibilidad). Tiempo total: ~2–3 h, la mayor
 parte es la compilación de gem5 (desatendida).
 
 ## Requisitos
@@ -96,13 +103,15 @@ El entorno está correcto si se cumple **todo** lo siguiente:
 | `qemu-aarch64 ./bin/hola` | `Hola desde ARM en gem5` |
 | Salida de gem5 | `gem5 version 26.0.0.0` |
 | Salida de gem5 | `Hola desde ARM en gem5` |
-| Última línea de gem5 | `Exiting @ tick 46502000 because exiting with last active thread context` |
+| Última línea de gem5 | `Exiting @ tick 46480000 because exiting with last active thread context` |
 | `ls ~/arqui/gem5/m5out/` | contiene `stats.txt`, `config.ini` y `config.dot.pdf` |
 
 gem5 es determinista: con la misma versión de gem5 y el mismo binario, el número
-de tick es idéntico en cualquier máquina. **Si el tick difiere**, casi siempre es
-porque el compilador cruzado o la libc son de otra versión (comparar
-`aarch64-linux-gnu-gcc --version` con la tabla de abajo).
+de tick es idéntico en cualquier máquina. El valor de la tabla es el del contenedor
+Docker. **Si el tick difiere**, casi siempre es porque el compilador cruzado o la
+libc son de otra versión (comparar `aarch64-linux-gnu-gcc --version` con la tabla
+de abajo). Un entorno nativo con otra actualización de la libc puede dar, por
+ejemplo, `46502000`: gem5 está bien, pero el binario no es idéntico.
 
 ## Avisos esperados (no son errores)
 

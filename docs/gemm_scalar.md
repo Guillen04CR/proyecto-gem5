@@ -131,7 +131,7 @@ Cada corrida produce **2 bloques** (`grep -c "Begin Simulation Statistics"` da 2
 | 2 | gem5 al terminar | Desde el reset **hasta el final**: ROI + `check` + `printf` + salida. |
 
 `m5_dump_stats` escribe pero **no reinicia** los contadores, por eso el bloque 2
-incluye al bloque 1. `parse_stats.py` debe tomar siempre el **primer** bloque.
+incluye al bloque 1. `scripts/parse_e1.py` toma siempre el **primer** bloque.
 
 ## ROI verificada a la instrucción
 
@@ -175,6 +175,11 @@ fuente, cualquier integrante debe obtener **exactamente** estos números
 | `simTicks` | 36 810 000 |
 
 Si difieren, revisar primero `aarch64-linux-gnu-gcc --version` (debe ser 13.3.0).
+
+> `simInsts` solo depende del código de `gemm` y debe dar 27 028 en cualquier entorno
+> con GCC 13.3. `simTicks` también depende de dónde quedan A, B y C en memoria (que
+> cambia con la versión de la libc), así que el valor de la tabla corresponde al
+> entorno donde se midió. Ver `docs/E1.md`, sección Reproducibilidad.
 
 ## Verificaciones antes de usar los resultados
 

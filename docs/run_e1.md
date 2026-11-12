@@ -16,7 +16,7 @@ un núcleo, los modelos TimingSimple, Minor y O3, y los tamaños `N=64` y
 Desde la raíz del repositorio:
 
 ```bash
-./scripts/run_e1.sh /ruta/a/gem5/build/ARM/gem5.opt
+./scripts/run_e1.sh ~/arqui/gem5/build/ARM_MESI/gem5.opt
 ```
 
 La ruta se proporciona al ejecutar y no se guarda en el repositorio. El equipo
@@ -41,15 +41,20 @@ results/e1/o3_N64/
 results/e1/o3_N128/
 ```
 
-gem5 genera al menos `stats.txt` y `config.ini` en cada carpeta. El script se
-detiene si alguna carpeta de salida ya existe: no elimina ni sobrescribe una
-corrida anterior.
+Cada carpeta contiene `stats.txt` y `config.ini` (los genera gem5) y `run.log`
+(la salida de gem5 y del programa, con `E1_VALIDATION: PASS`). gem5 también puede
+generar `config.dot*`, `config.json` y `citations.bib`; son redundantes y el
+`.gitignore` los excluye.
+
+El script se detiene si alguna carpeta de salida ya existe (no elimina ni
+sobrescribe una corrida anterior) o si alguna corrida no da `E1_VALIDATION: PASS`.
 
 ## Alcance
 
 Este script compila el binario AArch64 de E1 y ejecuta las seis configuraciones.
 No extrae métricas, no selecciona el bloque ROI y no genera CSV ni gráficas.
-Esas tareas corresponden a `scripts/parse_stats.py`.
+Esas tareas corresponden a `scripts/parse_e1.py`, `scripts/plot_e1.py` y
+`scripts/verify_e1.sh` (ver `docs/E1.md`).
 
 Después de revisar las seis corridas oficiales, `stats.txt` y `config.ini` de
 cada configuración quedan disponibles como entrada para el parser y como

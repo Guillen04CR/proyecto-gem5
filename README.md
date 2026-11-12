@@ -16,7 +16,7 @@ protocolos de coherencia sobre ARMv8 en gem5 (modo SE), para responder:
 
 | Experimento | Tema | Líder | Estado |
 |---|---|---|---|
-| E1 | Línea base: TimingSimple, Minor, O3 | Andrés Guillén | En curso |
+| E1 | Línea base: TimingSimple, Minor, O3 | Andrés Guillén | Completado ([docs/E1.md](docs/E1.md)) |
 | E2 | Superescalar: ancho 1/2/4/8 × ROB 32/64/192 | Andrés Guillén | Pendiente |
 | E3 | Vectorial: escalar vs. SVE, VL 128–1024 | _(nombre)_ | Pendiente |
 | E4 | Multiprocesador: 1, 2, 4, 8 núcleos | _(nombre)_ | Pendiente |
@@ -29,21 +29,28 @@ protocolos de coherencia sobre ARMv8 en gem5 (modo SE), para responder:
 proyecto-gem5/
 ├─ src/              # Benchmarks en C: gemm_scalar.c, gemm_sve.c, gemm_omp.c, false_sharing.c
 ├─ bin/              # Binarios AArch64 compilados (ignorados por git, se regeneran)
-├─ configs/
+├─ configs/          # Sistemas de gem5 por experimento (run_e1.py, …)
 │  └─ build_opts/    # Opciones de compilación de gem5 (ISA + protocolo Ruby)
-├─ scripts/          # run_e1.sh … run_e6.sh, parse_stats.py
-├─ results/          # Una carpeta por corrida (stats.txt, config.ini) + CSV por experimento
+├─ scripts/          # run_eX.sh (corre), parse_eX.py (CSV), plot_eX.py (gráficas), verify_eX.sh
+├─ results/          # Una carpeta por corrida (stats.txt, config.ini, run.log) + CSV y gráficas
 ├─ report/           # Informe IEEE
+├─ docker/           # Imagen del entorno reproducible (Dockerfile + guía)
+├─ compose.yaml      # Arranque del contenedor: docker compose run --rm gem5
 └─ docs/
    ├─ SETUP.md       # Guía de montaje del entorno
-   └─ gemm_scalar.md # Guía del benchmark escalar (contrato de datos, ROI, validación)
+   ├─ gemm_scalar.md # Guía del benchmark escalar (contrato de datos, ROI, validación)
+   ├─ run_e1.md      # Guía de scripts/run_e1.sh
+   └─ E1.md          # Experimento E1: configuración, resultados y análisis
 ```
 
 ## Entorno
 
-Para montar el entorno desde cero, seguir **[docs/SETUP.md](docs/SETUP.md)**.
-Incluye una prueba de aceptación: si `hola.c` termina en `tick 46502000`, el entorno
-es equivalente al usado para generar los resultados.
+Las corridas oficiales se hacen en el contenedor Docker del repositorio, para que
+todos usen el mismo compilador y la misma libc: ver **[docker/README.md](docker/README.md)**.
+Para montar el entorno sin Docker, seguir **[docs/SETUP.md](docs/SETUP.md)**.
+
+Prueba de aceptación: en el contenedor, `hola.c` termina en `tick 46480000`. Si da
+ese tick, el entorno es equivalente al usado para generar los resultados.
 
 | Componente | Versión |
 |---|---|
@@ -52,6 +59,7 @@ es equivalente al usado para generar los resultados.
 | SCons | 4.5.2 |
 | aarch64-linux-gnu-gcc | 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04.1) |
 | qemu-aarch64 | 8.2.2 |
+| Docker (imagen) | `ubuntu:24.04` + paquetes de `docs/SETUP.md` (`docker/Dockerfile`) |
 
 | Binario de gem5 | Protocolo Ruby | Usado en |
 |---|---|---|
@@ -83,19 +91,24 @@ Cada experimento se regenera con un solo comando desde la raíz del repositorio:
 ### E1
 
 ```bash
-./scripts/run_e1.sh /ruta/a/gem5/build/ARM/gem5.opt
+./scripts/run_e1.sh ~/arqui/gem5/build/ARM_MESI/gem5.opt   # compila y corre las 6 corridas
+python3 scripts/parse_e1.py                                 # → results/e1/summary.csv
+python3 scripts/plot_e1.py                                  # → results/e1/*.png
+./scripts/verify_e1.sh                                      # "E1 VERIFICADO" = evidencia completa
 ```
 
-El script compila el benchmark AArch64 y ejecuta las seis configuraciones de
-E1. Ver [docs/run_e1.md](docs/run_e1.md) para los prerrequisitos, las carpetas
-de salida y el alcance del script.
+Ver [docs/run_e1.md](docs/run_e1.md) para los prerrequisitos y las carpetas de
+salida, y **[docs/E1.md](docs/E1.md)** para la configuración, los resultados y el
+análisis.
 
 ## Convenciones de trabajo
 
 - **Ramas:** nadie trabaja directo en `main`. Cada tarea va en una rama
   `nombre/tema` (p. ej. `andres/e1-linea-base`) y entra a `main` por pull request
   revisado por otro integrante.
-- **Binarios:** se compilan en `bin/`, nunca se suben al repositorio.
+- **Binarios:** se compilan en `bin/`, nunca se suben al repositorio (`.gitignore`).
+- **Entorno:** todas las corridas oficiales se hacen dentro del contenedor
+  (`docker compose run --rm gem5`), para que los números sean comparables.
 - **Resultados:** cada corrida de gem5 usa `-d results/eX/<configuración>` para no
   sobrescribir otras corridas.
 - **Uso de IA generativa:** permitido según el enunciado; todo resultado obtenido con
