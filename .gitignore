@@ -43,3 +43,17 @@ __pycache__/
 # ===== Protección =====
 # Por si alguien clona gem5 dentro del repo por error (~1 GB + 10 GB compilado)
 gem5/
+
+# ===== Corridas de gem5 =====
+# Los run.log de las corridas SÍ se versionan (verify_eX.sh busca VALIDATION: PASS).
+# Esta excepción anula el *.log de LaTeX solo dentro de results/.
+!results/**/run.log
+# Archivos extra que gem5 genera en cada corrida; redundantes con config.ini y stats.txt
+results/**/config.dot
+results/**/config.dot.pdf
+results/**/config.dot.svg
+results/**/config.json
+results/**/citations.bib
+
+# ===== Metadatos de Windows =====
+*Zone.Identifier
