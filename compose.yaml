@@ -4,6 +4,7 @@
 # Dentro del contenedor, ~/arqui es el mismo ~/arqui del anfitrión.
 services:
   gem5:
+    platform: linux/amd64
     build: ./docker
     image: proyecto-gem5:dev
     # Correr con el usuario del anfitrión: si no, results/ queda con dueño root.
