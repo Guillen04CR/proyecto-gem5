@@ -17,7 +17,7 @@ protocolos de coherencia sobre ARMv8 en gem5 (modo SE), para responder:
 | Experimento | Tema | Líder | Estado |
 |---|---|---|---|
 | E1 | Línea base: TimingSimple, Minor, O3 | Andrés Guillén | Completado ([docs/E1.md](docs/E1.md)) |
-| E2 | Superescalar: ancho 1/2/4/8 × ROB 32/64/192 | Andrés Guillén | Pendiente |
+| E2 | Superescalar: ancho 1/2/4/8 × ROB 32/64/192 | Andrés Guillén | Completado ([docs/E2.md](docs/E2.md)) |
 | E3 | Vectorial: escalar vs. SVE, VL 128–1024 | _(nombre)_ | Pendiente |
 | E4 | Multiprocesador: 1, 2, 4, 8 núcleos | _(nombre)_ | Pendiente |
 | E5 | Coherencia: MESI_Two_Level vs. MOESI_CMP_directory | _(nombre)_ | Pendiente |
@@ -40,7 +40,9 @@ proyecto-gem5/
    ├─ SETUP.md       # Guía de montaje del entorno
    ├─ gemm_scalar.md # Guía del benchmark escalar (contrato de datos, ROI, validación)
    ├─ run_e1.md      # Guía de scripts/run_e1.sh
-   └─ E1.md          # Experimento E1: configuración, resultados y análisis
+   ├─ E1.md          # Experimento E1: configuración, resultados y análisis
+   ├─ run_e2.md      # Guía de scripts/run_e2.sh
+   └─ E2.md          # Experimento E2: ancho, ROB, resultados y análisis
 ```
 
 ## Entorno
@@ -100,6 +102,16 @@ python3 scripts/plot_e1.py                                  # → results/e1/*.p
 Ver [docs/run_e1.md](docs/run_e1.md) para los prerrequisitos y las carpetas de
 salida, y **[docs/E1.md](docs/E1.md)** para la configuración, los resultados y el
 análisis.
+
+### E2
+
+```bash
+JOBS=3 ./scripts/run_e2.sh ~/arqui/gem5/build/ARM_MESI/gem5.opt   # 24 corridas
+python3 scripts/parse_e2.py                                         # → results/e2/summary.csv
+python3 scripts/plot_e2.py                                          # → results/e2/*.png
+```
+
+Ver [docs/run_e2.md](docs/run_e2.md) y **[docs/E2.md](docs/E2.md)**.
 
 ## Convenciones de trabajo
 
