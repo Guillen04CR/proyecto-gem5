@@ -92,9 +92,12 @@ cd ~/arqui/proyecto-gem5
 mkdir -p bin
 aarch64-linux-gnu-gcc -O2 -static src/hola.c -o bin/hola
 qemu-aarch64 ./bin/hola
-cd ~/arqui/gem5
-build/ARM_MESI/gem5.opt configs/deprecated/example/se.py -c ~/arqui/proyecto-gem5/bin/hola
+~/arqui/gem5/build/ARM_MESI/gem5.opt -d /tmp/hola \
+  ~/arqui/gem5/configs/deprecated/example/se.py -c bin/hola
 ```
+
+El comando de gem5 se corre **desde la raíz del repositorio** y con la ruta
+**relativa** `bin/hola`, tal como está escrito (ver la nota sobre la ruta, abajo).
 
 El entorno está correcto si se cumple **todo** lo siguiente:
 
@@ -104,14 +107,27 @@ El entorno está correcto si se cumple **todo** lo siguiente:
 | Salida de gem5 | `gem5 version 26.0.0.0` |
 | Salida de gem5 | `Hola desde ARM en gem5` |
 | Última línea de gem5 | `Exiting @ tick 46480000 because exiting with last active thread context` |
-| `ls ~/arqui/gem5/m5out/` | contiene `stats.txt`, `config.ini` y `config.dot.pdf` |
+| `ls /tmp/hola/` | contiene `stats.txt`, `config.ini` y `config.dot.pdf` |
 
-gem5 es determinista: con la misma versión de gem5 y el mismo binario, el número
-de tick es idéntico en cualquier máquina. El valor de la tabla es el del contenedor
-Docker. **Si el tick difiere**, casi siempre es porque el compilador cruzado o la
-libc son de otra versión (comparar `aarch64-linux-gnu-gcc --version` con la tabla
-de abajo). Un entorno nativo con otra actualización de la libc puede dar, por
-ejemplo, `46502000`: gem5 está bien, pero el binario no es idéntico.
+gem5 es determinista: con la misma versión de gem5, el mismo binario **y el mismo
+comando**, el número de tick es idéntico en cualquier máquina. El valor de la tabla
+se verificó en el contenedor Docker y en Ubuntu 24.04 nativo.
+
+**La ruta del binario cambia el tick.** En modo SE, gem5 copia la ruta que recibe
+con `-c` (es `argv[0]`) a la pila del programa simulado. Una ruta de otro largo
+desplaza la pila, y las variables locales caen en otras líneas de caché. Con el
+mismo binario:
+
+| Comando | Tick |
+|---|---|
+| `-c bin/hola` | 46 480 000 |
+| `-c /home/<usuario>/arqui/proyecto-gem5/bin/hola` | 46 502 000 |
+
+Por eso la prueba usa una ruta relativa: así no depende del nombre de usuario.
+`simInsts` no cambia con la ruta; solo los ticks.
+
+**Si el tick difiere** usando el comando exacto de arriba, el binario no es
+idéntico: revisar `aarch64-linux-gnu-gcc --version` contra la tabla de abajo.
 
 ## Avisos esperados (no son errores)
 
