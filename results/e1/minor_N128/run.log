@@ -1,0 +1,45 @@
+warn: Base 10 memory/cache size 32kB will be cast to base 2 size 32KiB.
+warn: Base 10 memory/cache size 32kB will be cast to base 2 size 32KiB.
+warn: Base 10 memory/cache size 256kB will be cast to base 2 size 256KiB.
+Global frequency set at 1000000000000 ticks per second
+src/mem/dram_interface.cc:691: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (512 Mbytes)
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdUnitStrideSegmentedLoad
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdUnitStrideSegmentedStore
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdUnitStrideSegmentedFaultOnlyFirstLoad
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdStrideSegmentedLoad
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdStrideSegmentedStore
+src/base/socket.cc:249: info: system.remote_gdb: Listening for connections on port 7000
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 26.0.0.0
+gem5 compiled Nov 10 2026 03:43:32
+gem5 started Nov 10 2026 07:21:28
+gem5 executing on 8ad580f719bf, pid 4697
+command line: /work/arqui/gem5/build/ARM_MESI/gem5.opt -d /work/arqui/proyecto-gem5/results/e1/minor_N128 /work/arqui/proyecto-gem5/configs/run_e1.py --cpu minor --size 128
+
+
+========== EXPERIMENTO E1 ==========
+Arquitectura: AArch64
+Modo: SE
+CPU: minor
+Nucleos: 1
+N: 128
+Frecuencia: 2GHz
+L1I: 32kB
+L1D: 32kB
+L2: 256kB
+Binario: /work/arqui/proyecto-gem5/bin/gemm_scalar
+===================================
+
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/syscall_emul.hh:1123: warn: readlink() called on '/proc/self/exe' may yield unexpected results in various settings.
+      Returning '/work/arqui/proyecto-gem5/bin/gemm_scalar'
+src/arch/arm/insts/pseudo.cc:174: warn: 	instruction 'bti' unimplemented
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+N=128  C[0][1]=2240.0  errores=0
+E1_VALIDATION: PASS
+Simulacion finalizada: exiting with last active thread context

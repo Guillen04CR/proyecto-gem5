@@ -1,0 +1,17 @@
+# Uso (desde la raíz del repo):
+#   docker compose build
+#   docker compose run --rm gem5
+# Dentro del contenedor, ~/arqui es el mismo ~/arqui del anfitrión.
+services:
+  gem5:
+    build: ./docker
+    image: proyecto-gem5:dev
+    # Correr con el usuario del anfitrión: si no, results/ queda con dueño root.
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      HOME: /work
+    volumes:
+      - ${ARQUI_DIR:-${HOME}/arqui}:/work/arqui
+    working_dir: /work/arqui/proyecto-gem5
+    stdin_open: true
+    tty: true
