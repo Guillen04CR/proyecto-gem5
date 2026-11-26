@@ -17,3 +17,24 @@
 #define CACHELINE_BYTES 64U
 #define MAX_THREADS 8
 #define DEFAULT_ITERATIONS 100000UL
+
+/* Contadores consecutivos: contador[0] esta en byte 0, contador[1] en byte 8,
+ * etc. La alineacion hace que los primeros ocho contadores compartan una linea
+ * de 64 B de manera deliberada. */
+struct UnpaddedCounter {
+    volatile uint64_t value;
+};
+
+/* Un contador por linea de cache. La alineacion evita que dos estructuras
+ * consecutivas compartan una misma linea. */
+struct PaddedCounter {
+    volatile uint64_t value;
+    unsigned char padding[CACHELINE_BYTES - sizeof(uint64_t)];
+} __attribute__((aligned(CACHELINE_BYTES)));
+
+_Static_assert(sizeof(struct PaddedCounter) == CACHELINE_BYTES,
+               "PaddedCounter debe ocupar exactamente una linea de cache");
+
+static struct UnpaddedCounter unpadded[MAX_THREADS]
+    __attribute__((aligned(CACHELINE_BYTES)));
+static struct PaddedCounter padded[MAX_THREADS];
