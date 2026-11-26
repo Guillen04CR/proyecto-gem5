@@ -172,3 +172,66 @@ for index, cpu in enumerate(system.cpu):
     system.ruby._cpu_ports[index].connectCpuPorts(cpu)
 
 system.workload = SEWorkload.init_compatible(args.binary)
+
+# Un proceso multihilo compartido por los CPU simulados. Cada hilo del programa
+# actualiza un contador distinto y gem5 lo programa sobre estos contextos.
+process = Process(pid=100)
+process.executable = args.binary
+process.cmd = [
+    args.binary,
+    str(args.threads),
+    args.layout,
+    str(args.iterations),
+]
+process.cwd = os.getcwd()
+process.gid = os.getgid()
+
+for cpu in system.cpu:
+    cpu.workload = process
+    cpu.createThreads()
+
+
+# Ruby crea las caches, directorio, red y controladoras del protocolo que ya
+# viene incorporado en gem5.opt. No se combinan estas caches con las clasicas
+# de E1.
+Ruby.create_system(args, False, system)
+if args.threads != len(system.ruby._cpu_ports):
+    raise SystemExit("ERROR: Ruby no creo un puerto por CPU")
+
+system.ruby.clk_domain = SrcClockDomain(
+    clock=args.ruby_clock, voltage_domain=system.voltage_domain
+)
+for index, cpu in enumerate(system.cpu):
+    cpu.createInterruptController()
+    system.ruby._cpu_ports[index].connectCpuPorts(cpu)
+
+system.workload = SEWorkload.init_compatible(args.binary)
+
+
+# ---------------------------------------------------------------------------
+# Simulacion
+# ---------------------------------------------------------------------------
+root = Root(full_system=False, system=system)
+m5.instantiate()
+
+print("\n========== EXPERIMENTO E5 ==========")
+print("Arquitectura: AArch64")
+print("Modo: SE + Ruby")
+print("Protocolo:", protocol)
+print("CPU: ArmTimingSimpleCPU")
+print("Nucleos / hilos:", args.threads)
+print("Layout:", args.layout)
+print("Iteraciones por hilo:", args.iterations)
+print("Frecuencia CPU/Ruby:", args.cpu_clock, "/", args.ruby_clock)
+print("Linea de cache:", str(args.cacheline_size) + "B")
+print("L1I/L1D/L2:", args.l1i_size, "/", args.l1d_size, "/", args.l2_size)
+print("Topologia:", args.topology)
+print("Binario:", args.binary)
+print("===================================\n")
+
+exit_event = m5.simulate()
+print("Simulacion finalizada:", exit_event.getCause())
+
+# El benchmark ya escribio el bloque 1 de stats.txt al cerrar la ROI. Este
+# volcado final conserva un segundo bloque acumulado, igual que en E1.
+m5.stats.dump()
