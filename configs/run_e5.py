@@ -127,3 +127,14 @@ system = System(
     mem_ranges=[AddrRange(args.mem_size)],
     cache_line_size=args.cacheline_size,
 )
+
+system.voltage_domain = VoltageDomain(voltage=args.sys_voltage)
+system.clk_domain = SrcClockDomain(
+    clock=args.sys_clock, voltage_domain=system.voltage_domain
+)
+system.cpu_voltage_domain = VoltageDomain()
+system.cpu_clk_domain = SrcClockDomain(
+    clock=args.cpu_clock, voltage_domain=system.cpu_voltage_domain
+)
+for cpu in system.cpu:
+    cpu.clk_domain = system.cpu_clk_domain
