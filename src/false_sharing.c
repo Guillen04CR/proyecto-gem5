@@ -110,3 +110,103 @@ static int parse_iterations(const char *text, unsigned long *iterations)
     *iterations = value;
     return 1;
 }
+
+int main(int argc, char **argv)
+{
+    int threads;
+    int use_padding;
+    unsigned long iterations = DEFAULT_ITERATIONS;
+
+    if (argc < 3 || argc > 4 || !parse_threads(argv[1], &threads)) {
+        usage(argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    if (strcmp(argv[2], "unpadded") == 0) {
+        use_padding = 0;
+    } else if (strcmp(argv[2], "padded") == 0) {
+        use_padding = 1;
+    } else {
+        usage(argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    if (argc == 4 && !parse_iterations(argv[3], &iterations)) {
+        fprintf(stderr, "Iteraciones debe ser un entero positivo\n");
+        return EXIT_FAILURE;
+    }
+
+    pthread_t workers[MAX_THREADS];
+    struct WorkerArgs worker_args[MAX_THREADS];
+    struct WorkerArgs main_args;
+    pthread_barrier_t ready;
+    pthread_barrier_t start;
+
+    memset(unpadded, 0, sizeof(unpadded));
+    memset(padded, 0, sizeof(padded));
+
+    if (pthread_barrier_init(&ready, NULL, (unsigned int)threads) != 0 ||
+        pthread_barrier_init(&start, NULL, (unsigned int)threads) != 0) {
+        fprintf(stderr, "No se pudieron crear las barreras de hilos\n");
+        return EXIT_FAILURE;
+    }
+
+    /* El hilo principal es el trabajador 0; cada hilo de ejecucion ocupa un
+     * CPU simulado, por lo que solo se crean threads - 1 pthreads adicionales. */
+    for (int i = 1; i < threads; ++i) {
+        worker_args[i] = (struct WorkerArgs){
+            .id = i,
+            .iterations = iterations,
+            .use_padding = use_padding,
+            .ready = &ready,
+            .start = &start,
+        };
+        if (pthread_create(&workers[i], NULL, increment_counter,
+                           &worker_args[i]) != 0) {
+            fprintf(stderr, "No se pudo crear el hilo %d\n", i);
+            return EXIT_FAILURE;
+        }
+    }
+
+    main_args = (struct WorkerArgs){
+        .id = 0,
+        .iterations = iterations,
+        .use_padding = use_padding,
+        .ready = &ready,
+        .start = &start,
+    };
+
+    /* Los trabajadores secundarios y main llegan aqui antes de la ROI. */
+    (void)pthread_barrier_wait(&ready);
+
+    m5_reset_stats(0, 0);
+    (void)pthread_barrier_wait(&start);
+
+    increment_assigned_counter(&main_args);
+
+    for (int i = 1; i < threads; ++i) {
+        if (pthread_join(workers[i], NULL) != 0) {
+            fprintf(stderr, "No se pudo esperar el hilo %d\n", i);
+            return EXIT_FAILURE;
+        }
+    }
+    m5_dump_stats(0, 0);
+
+    uint64_t total = 0;
+    for (int i = 0; i < threads; ++i) {
+        total += use_padding ? padded[i].value : unpadded[i].value;
+    }
+
+    uint64_t expected = (uint64_t)threads * iterations;
+    const char *layout = use_padding ? "padded" : "unpadded";
+    int valid = (total == expected);
+
+    printf("threads=%d layout=%s iterations=%lu total=%" PRIu64
+           " expected=%" PRIu64 "\n",
+           threads, layout, iterations, total, expected);
+    printf("E5_VALIDATION: %s\n", valid ? "PASS" : "FAIL");
+
+    (void)pthread_barrier_destroy(&ready);
+    (void)pthread_barrier_destroy(&start);
+    return valid ? EXIT_SUCCESS : EXIT_FAILURE;
+}
