@@ -1,5 +1,22 @@
 #define _XOPEN_SOURCE 700
 
+/*
+ * false_sharing.c -- microbenchmark de coherencia para E5.
+ *
+ * Uso:
+ *   false_sharing <hilos: 2|4|8> <unpadded|padded> [iteraciones]
+ *
+ * Cada hilo actualiza exclusivamente su propio contador. Con "unpadded" los
+ * contadores son palabras de 8 bytes contiguas: hasta 8 caben en una linea de
+ * cache de 64 bytes y las escrituras causan falso compartido. Con "padded",
+ * cada contador ocupa exactamente una linea de 64 bytes, por lo que esas
+ * invalidaciones no deben ocurrir entre contadores distintos.
+ *
+ * La region de interes empieza solo cuando todos los hilos ya fueron creados
+ * y estan esperando una barrera. La inicializacion, creacion de hilos y
+ * validacion quedan fuera de la ROI.
+ */
+
 #include <inttypes.h>
 #include <pthread.h>
 #include <stdint.h>
