@@ -117,3 +117,13 @@ args.l1d_size = "32kB"
 args.l2_size = "256kB"
 args.topology = "Crossbar"
 args.network = "simple"
+
+# ---------------------------------------------------------------------------
+# Sistema ARM en modo syscall emulation (SE)
+# ---------------------------------------------------------------------------
+system = System(
+    cpu=[ArmTimingSimpleCPU(cpu_id=index) for index in range(args.threads)],
+    mem_mode="timing",
+    mem_ranges=[AddrRange(args.mem_size)],
+    cache_line_size=args.cacheline_size,
+)
