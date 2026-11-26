@@ -81,3 +81,18 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
+
+# ---------------------------------------------------------------------------
+# Validaciones del contrato E5
+# ---------------------------------------------------------------------------
+protocol = buildEnv.get("PROTOCOL")
+if protocol not in VALID_PROTOCOLS:
+    raise SystemExit(
+        "ERROR: este experimento requiere un gem5 compilado con MESI_Two_Level "
+        "o MOESI_CMP_directory; protocolo actual: " + str(protocol)
+    )
+
+if not os.path.isfile(args.binary):
+    raise SystemExit("ERROR: no existe el binario AArch64: " + args.binary)
+if not os.access(args.binary, os.X_OK):
+    raise SystemExit("ERROR: el binario no tiene permiso de ejecucion")
