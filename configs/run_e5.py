@@ -96,3 +96,24 @@ if not os.path.isfile(args.binary):
     raise SystemExit("ERROR: no existe el binario AArch64: " + args.binary)
 if not os.access(args.binary, os.X_OK):
     raise SystemExit("ERROR: el binario no tiene permiso de ejecucion")
+
+# ---------------------------------------------------------------------------
+# Parametros fijos: no se barren en E5
+# ---------------------------------------------------------------------------
+# Estos valores se establecen despues de parsear para que ninguna opcion casual
+# de la linea de comandos cambie una comparacion de protocolos.
+args.ruby = True
+args.cpu_type = "ArmTimingSimpleCPU"
+args.num_cpus = args.threads
+args.num_l2caches = args.threads
+args.num_dirs = 1
+args.sys_clock = "2GHz"
+args.cpu_clock = "2GHz"
+args.ruby_clock = "2GHz"
+args.mem_size = "512MiB"
+args.cacheline_size = 64
+args.l1i_size = "32kB"
+args.l1d_size = "32kB"
+args.l2_size = "256kB"
+args.topology = "Crossbar"
+args.network = "simple"
