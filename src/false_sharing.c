@@ -76,3 +76,37 @@ static void *increment_counter(void *opaque)
 
     return NULL;
 }
+
+static void usage(const char *program)
+{
+    fprintf(stderr,
+            "Uso: %s <hilos: 2|4|8> <unpadded|padded> [iteraciones]\n",
+            program);
+}
+
+static int parse_threads(const char *text, int *threads)
+{
+    char *end = NULL;
+    long value = strtol(text, &end, 10);
+
+    if (*text == '\0' || *end != '\0' ||
+        (value != 2 && value != 4 && value != 8)) {
+        return 0;
+    }
+
+    *threads = (int)value;
+    return 1;
+}
+
+static int parse_iterations(const char *text, unsigned long *iterations)
+{
+    char *end = NULL;
+    unsigned long value = strtoul(text, &end, 10);
+
+    if (*text == '\0' || *end != '\0' || value == 0) {
+        return 0;
+    }
+
+    *iterations = value;
+    return 1;
+}
