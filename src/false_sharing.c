@@ -38,3 +38,41 @@ _Static_assert(sizeof(struct PaddedCounter) == CACHELINE_BYTES,
 static struct UnpaddedCounter unpadded[MAX_THREADS]
     __attribute__((aligned(CACHELINE_BYTES)));
 static struct PaddedCounter padded[MAX_THREADS];
+
+struct WorkerArgs {
+    int id;
+    unsigned long iterations;
+    int use_padding;
+    pthread_barrier_t *ready;
+    pthread_barrier_t *start;
+};
+
+static void increment_assigned_counter(const struct WorkerArgs *args)
+{
+    if (args->use_padding) {
+        volatile uint64_t *counter = &padded[args->id].value;
+        for (unsigned long i = 0; i < args->iterations; ++i) {
+            ++*counter;
+        }
+    } else {
+        volatile uint64_t *counter = &unpadded[args->id].value;
+        for (unsigned long i = 0; i < args->iterations; ++i) {
+            ++*counter;
+        }
+    }
+}
+
+static void *increment_counter(void *opaque)
+{
+    struct WorkerArgs *args = opaque;
+
+    /* Todos los hilos existen antes de que main reinicie estadisticas. */
+    (void)pthread_barrier_wait(args->ready);
+
+    /* main libera esta barrera inmediatamente despues de m5_reset_stats(). */
+    (void)pthread_barrier_wait(args->start);
+
+    increment_assigned_counter(args);
+
+    return NULL;
+}
