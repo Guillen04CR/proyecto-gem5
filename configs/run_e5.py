@@ -138,3 +138,37 @@ system.cpu_clk_domain = SrcClockDomain(
 )
 for cpu in system.cpu:
     cpu.clk_domain = system.cpu_clk_domain
+
+# Un proceso multihilo compartido por los CPU simulados. Cada hilo del programa
+# actualiza un contador distinto y gem5 lo programa sobre estos contextos.
+process = Process(pid=100)
+process.executable = args.binary
+process.cmd = [
+    args.binary,
+    str(args.threads),
+    args.layout,
+    str(args.iterations),
+]
+process.cwd = os.getcwd()
+process.gid = os.getgid()
+
+for cpu in system.cpu:
+    cpu.workload = process
+    cpu.createThreads()
+
+
+# Ruby crea las caches, directorio, red y controladoras del protocolo que ya
+# viene incorporado en gem5.opt. No se combinan estas caches con las clasicas
+# de E1.
+Ruby.create_system(args, False, system)
+if args.threads != len(system.ruby._cpu_ports):
+    raise SystemExit("ERROR: Ruby no creo un puerto por CPU")
+
+system.ruby.clk_domain = SrcClockDomain(
+    clock=args.ruby_clock, voltage_domain=system.voltage_domain
+)
+for index, cpu in enumerate(system.cpu):
+    cpu.createInterruptController()
+    system.ruby._cpu_ports[index].connectCpuPorts(cpu)
+
+system.workload = SEWorkload.init_compatible(args.binary)
