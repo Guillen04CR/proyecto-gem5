@@ -178,8 +178,10 @@ Si difieren, revisar primero `aarch64-linux-gnu-gcc --version` (debe ser 13.3.0)
 
 > `simInsts` solo depende del código de `gemm` y debe dar 27 028 en cualquier entorno
 > con GCC 13.3. `simTicks` también depende de dónde quedan A, B y C en memoria (que
-> cambia con la versión de la libc), así que el valor de la tabla corresponde al
-> entorno donde se midió. Ver `docs/E1.md`, sección Reproducibilidad.
+> cambia si el ejecutable cambia de tamaño, por ejemplo con otro compilador o libc),
+> así que el valor de la tabla corresponde al toolchain con que se midió. La ruta con
+> que se pasa el binario a gem5 (`-c`) **no** cambia la ROI, aunque sí el tiempo total
+> del programa. Ver `docs/E1.md`, sección Reproducibilidad.
 
 ## Verificaciones antes de usar los resultados
 
