@@ -2,9 +2,7 @@
 import subprocess
 from pathlib import Path
 
-# ============================================================
-# 1. CONFIGURACION DE RUTAS
-# ============================================================
+
 
 PROYECTO = Path(__file__).resolve().parent.parent
 GEM5 = Path.home() / "proyectos/gem5"
@@ -14,9 +12,6 @@ CONFIG = GEM5 / "configs/deprecated/example/se.py"
 BINARIO = PROYECTO / "bin/gemm"
 RESULTADOS = PROYECTO / "results"
 
-# ============================================================
-# 2. VERIFICACION DE ARCHIVOS
-# ============================================================
 
 for archivo in [SIMULADOR, CONFIG, BINARIO]:
     if not archivo.is_file():
@@ -24,9 +19,6 @@ for archivo in [SIMULADOR, CONFIG, BINARIO]:
 
 RESULTADOS.mkdir(parents=True, exist_ok=True)
 
-# ============================================================
-# 3. CONFIGURACION DEL EXPERIMENTO E4
-# ============================================================
 
 nucleos = [1, 2, 4, 8]
 

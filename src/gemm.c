@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[]) {
 
-    int N = 64;
+    int N = 128;
     int num_threads = 1;
 
     if (argc >= 2)
