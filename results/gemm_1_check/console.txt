@@ -1,0 +1,30 @@
+warn: The se.py script is deprecated. It will be removed in future releases of  gem5.
+Global frequency set at 1000000000000 ticks per second
+src/mem/dram_interface.cc:691: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (512 Mbytes)
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/stats/storage.hh:278: warn: Bucket size (4) does not divide range [1:32] into equal-sized buckets. Rounding up.
+src/base/stats/storage.hh:278: warn: Bucket size (4) does not divide range [1:8] into equal-sized buckets. Rounding up.
+src/base/socket.cc:249: info: system.remote_gdb: Listening for connections on port 7000
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 26.0.0.0
+gem5 compiled Oct 29 2026 22:07:11
+gem5 started Nov 27 2026 14:35:08
+gem5 executing on JuanPabloS, pid 2819
+command line: /home/juanp/proyectos/gem5/build/X86/gem5.opt -d /home/juanp/proyectos/proyecto-gem5/results/gemm_1_check /home/juanp/proyectos/gem5/configs/deprecated/example/se.py --cpu-type=O3CPU --num-cpus=1 --caches --l2cache -P 'system.cpu[:].fetchWidth=2' -P 'system.cpu[:].decodeWidth=2' -P 'system.cpu[:].renameWidth=2' -P 'system.cpu[:].dispatchWidth=2' -P 'system.cpu[:].issueWidth=2' -P 'system.cpu[:].wbWidth=2' -P 'system.cpu[:].commitWidth=2' -P 'system.cpu[:].forwardComSize=10' -c /home/juanp/proyectos/proyecto-gem5/bin/gemm -o '128 1'
+
+**** REAL SIMULATION ****
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+GEMM completado correctamente.
+Dimension: 128 x 128
+Hilos solicitados: 1
+Hilos utilizados: 1
+Checksum: 6377548.00
+Exiting @ tick 7762885500 because exiting with last active thread context
